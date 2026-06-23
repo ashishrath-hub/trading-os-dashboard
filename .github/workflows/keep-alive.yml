@@ -1,0 +1,16 @@
+name: Keep Streamlit Alive
+
+on:
+  schedule:
+    # Ping every 6 hours to prevent Streamlit Cloud hibernation
+    - cron: '0 3,9,15,21 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Streamlit app
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" https://trading-os-dashboard-mxruuv7sykjravuw8nanqk.streamlit.app || true
+          echo "Pinged at $(date)"
