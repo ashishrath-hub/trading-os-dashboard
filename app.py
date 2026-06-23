@@ -147,8 +147,11 @@ def render_overview():
         with col2:
             st.metric("Strategy", strategy or "—")
         with col3:
+            # Exclude gap_fade from position count
+            eq_positions = [p for p in state.get("positions_json", [])
+                           if "gap_fade" not in p.get("strategy", "")]
             st.metric("Open Positions",
-                      f"{state.get('open_positions', 0)} eq + "
+                      f"{len(eq_positions)} eq + "
                       f"{state.get('fo_open_positions', 0)} fo")
         with col4:
             st.metric("Capital Deployed", f"{state.get('deployed_pct', 0):.0f}%")
@@ -156,6 +159,10 @@ def render_overview():
         # ── Open positions table ──────────────────────────────
         positions = state.get("positions_json", [])
         fo_positions = state.get("fo_positions_json", [])
+
+        if positions:
+            # Filter out gap_fade positions (hidden temporarily)
+            positions = [p for p in positions if "gap_fade" not in p.get("strategy", "")]
 
         if positions:
             st.subheader("Equity Positions")
